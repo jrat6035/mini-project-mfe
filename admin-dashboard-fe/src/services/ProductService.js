@@ -13,7 +13,7 @@ export async function getProducts(active) {
 }
 
 export async function createProduct(product) {
-    return axios.post(API_ROUTE_PATHS.PRODUCTS_BASE_URL, product).
+    return axios.post("http://localhost:3000/api/create-product", product).
     then((response) => {
             return response.data;
         }).
@@ -22,6 +22,7 @@ export async function createProduct(product) {
             throw exception;
         })
 }
+  
 
 export async function getProduct(productId) {
     return axios.put(`${API_ROUTE_PATHS.PRODUCTS_BASE_URL}/${productId}`).
