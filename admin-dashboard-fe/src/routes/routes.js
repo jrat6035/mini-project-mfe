@@ -1,7 +1,8 @@
-export const BASE_URL = "http://localhost:8080";
+export const BASE_URL = "http://localhost:3000";
 
 export const API_ROUTE_PATHS = {
     PRODUCTS_BASE_URL: `${BASE_URL}/api/v1/products`,
+    USERS_BASE_URL: `${BASE_URL}/api/v1/users`,
 }
 
 export const ROUTE_PATHS = {
@@ -10,8 +11,12 @@ export const ROUTE_PATHS = {
     USER_PROFILE: "/profile",
     VIEW_CART: "/view-cart",
     ADD_PRODUCT: "/add-product",
-    VIEW_PRODUCTS: "/view-products",
+    EDIT_PRODUCTS: "/edit-products",
+    DISPLAY_PRODUCTS: "/display-products",
+    VIEW_PRODUCT: "/view-product",
+    PRODUCT: "/product",
     VIEW_USERS: "/view-users",
     VIEW_ADMINS: "/view-admins",
-    ADD_ADMIN: "/add-admin"
+    ADD_ADMIN: "/add-admin",
+    CONFIRM_SIGN_UP: "/confirm-sign-up",
 };

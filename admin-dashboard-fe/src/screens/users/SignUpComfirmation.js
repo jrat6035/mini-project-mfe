@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { confirmSignUp } from "../../utils/authUtils";
+import { confirmSignUp } from "../../middleware/auth";
 
 export default function SignUpComfirmation() {
   const [username, setUsername] = useState("");

@@ -9,7 +9,7 @@ const MainLayout = ({ children }) => {
         <Layout className="main-layout">
             <SideBar />
             <Layout>
-                <Header className="main-header" />
+                <Header title="Admin" className="main-header"></Header>
                 <Content className="main-container">{children}</Content>
                 <Footer className="main-footer"></Footer>
             </Layout>

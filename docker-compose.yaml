@@ -1,0 +1,9 @@
+version: "1.0"
+services: 
+  admin-dashboard-fe:
+    build: ./admin-dashboard-fe
+    container_name: admin-dashboard-fe
+    ports:
+      - '3009:3009'
+    stdin_open: true
+    tty: true

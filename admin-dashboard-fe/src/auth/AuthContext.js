@@ -1,52 +1,75 @@
-import { createContext, useState, useEffect } from "react";
-import * as auth from "../utils/authUtils";
+import { createContext, useEffect, useMemo } from "react";
+import * as auth from "../middleware/auth";
+import { message } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserByUserEmail } from "../middleware/user";
+import { setUser, clearUser, setLocalUser } from "../store/userSlice";
 
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getCurrentUser = async () => {
-    try {
-      const user = await auth.getCurrentUser();
-      console.log(user);
-      setUser(user);
-    } catch (err) {
-      console.log(err);
-      setUser(null);
-    }
-  };
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
+  const localUser = useSelector((state) => state.user.localUser);
 
   useEffect(() => {
     getCurrentUser()
-      .then(() => setIsLoading(false))
-      .catch(() => setIsLoading(false));
+      .then((user) => dispatch(setUser(user)))
+      .catch(() => dispatch(clearUser()));
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserTypeByEmail(user.email)
+        .then((localUser) => dispatch(setLocalUser(localUser)))
+        .catch(() => dispatch(setLocalUser(null)));
+    }
+  }, [user]);
+
+  const getCurrentUser = async () => {
+    try {
+      return await auth.getCurrentUser();
+    } catch (err) {
+      setUser(null);
+    }
+  };
 
   const signIn = async (username, password) => {
     try {
       await auth.signIn(username, password);
-      getCurrentUser();
+      getCurrentUser().then((user) => dispatch(setUser(user)));
     } catch (error) {
-      console.error("Error in signIn:", error); 
-    }
-  };
-  const signOut = async () => {
-    try {
-      auth.signOut();
-      setUser(null);
-    } catch (error) {
-      console.error("Error in signOut:", error); 
+      message.error("Error in signIn:", error);
     }
   };
 
-  const authValue = {
-    user,
-    isLoading,
-    signIn,
-    signOut,
+  const signOut = async () => {
+    try {
+      auth.signOut();
+      dispatch(clearUser());
+    } catch (error) {
+      message.error("Error in signOut:", error);
+    }
   };
+
+  const fetchUserTypeByEmail = async (email) => {
+    try {
+      return await getUserByUserEmail(email);
+    } catch (error) {
+      console.error("Error fetching user by email:", error);
+      throw error;
+    }
+  };
+
+  const authValue = useMemo(
+    () => ({
+      user,
+      localUser,
+      signIn,
+      signOut,
+    }),
+    [user, localUser, signIn, signOut]
+  );
 
   return (
     <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>

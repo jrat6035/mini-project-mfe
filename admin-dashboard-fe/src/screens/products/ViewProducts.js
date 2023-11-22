@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Space, Table } from "antd";
-import { getProduct, getProducts } from "../../utils/productUtils";
+import { Button, Popconfirm, Space, Table } from "antd";
+import { getProducts, removeProduct } from "../../middleware/product";
+import { Link } from "react-router-dom";
 
 const ViewProducts = () => {
   const [products, setProducts] = useState([]);
@@ -10,11 +11,15 @@ const ViewProducts = () => {
     async function fetchData() {
       const data = await getProducts();
       setProducts(data);
-      console.log(data);
     }
-
     fetchData();
   }, []);
+
+  const handleConfirm = async (key) => {
+    await removeProduct(key);
+    const updatedData = await getProducts();
+    setProducts(updatedData);
+  };
 
   useEffect(() => {
     const updatedProductsData = products.map((product) => ({
@@ -27,10 +32,7 @@ const ViewProducts = () => {
       date: product.productUpdatedDate,
     }));
     setProductsData(updatedProductsData);
-    console.log(productsData[0]);
   }, [products]);
-
-  console.log(productsData);
 
   const columns = [
     {
@@ -76,20 +78,16 @@ const ViewProducts = () => {
       width: "15%",
       render: (_, record) => (
         <Space size="middle">
-          <a
-            onClick={() => {
-              console.log(record.key);
-            }}
+          <Link to={`/product/${record.key}`}>Edit</Link>
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => handleConfirm(record.key)}
           >
-            Edit
-          </a>
-          <a
-            onClick={() => {
-              getProduct(record.key);
-            }}
-          >
-            Delete
-          </a>
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </Space>
       ),
     },

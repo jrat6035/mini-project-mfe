@@ -1,14 +1,13 @@
 import { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AuthContext } from "../../auth/AuthContext";
+import { message } from "antd";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  const navigate = useNavigate();
-
+  
   const { user, signIn } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
@@ -17,14 +16,13 @@ export default function Login() {
 
     try {
       await signIn(username, password);
-      navigate("/profile");
     } catch (err) {
-      setError(err.message);
+      message.error(err.message);
     }
   };
 
   if (user) {
-    return <Navigate to="/profile" />;
+    return <Navigate to="/view-cart" />;
   }
 
   return (
